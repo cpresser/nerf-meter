@@ -7,8 +7,9 @@
 #include <Adafruit_Sensor.h>
 #include <Adafruit_BNO055.h>
 #include <utility/imumaths.h>
-#include <IRremoteESP8266.h>
+#include <FS.h>
 #include "rboot.h"
+#include "rboot-api.h"
 
 #include <Fonts/FreeSerif9pt7b.h>
 #include <Fonts/Picopixel.h>
@@ -72,10 +73,13 @@ double maxi, mini, diff, lastval = 0;
 int counter;
 
 void setup() {
+  rboot_config rboot_config = rboot_get_config();
+  SPIFFS.begin();
+  File f = SPIFFS.open("/rom"+String(rboot_config.current_rom),"w");
+  f.println("NERF meter\n");
   tft.setFont(&FreeSerif9pt7b);
   setAnalogMUX(MUX_JOY);
   initBadge();
-  tft.setTextSize(1);
   bno.begin();
   delay(400);
 }
